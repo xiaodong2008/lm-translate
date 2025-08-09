@@ -17,6 +17,14 @@
                 />
                 <label for="streaming" class="checkbox-label">Stream</label>
               </div>
+              <div class="checkbox-group">
+                <Checkbox
+                  v-model="enableAutoTranslate"
+                  :binary="true"
+                  inputId="auto-translate"
+                />
+                <label for="auto-translate" class="checkbox-label">Auto</label>
+              </div>
               <Button
                 @click="clearInput"
                 size="small"
@@ -108,6 +116,7 @@ const props = defineProps<{
   translatedText: string;
   translatedMarkdownHtml: string;
   enableStreaming: boolean;
+  enableAutoTranslate: boolean;
   isTranslating: boolean;
   error: string;
   layoutMode: "flex" | "block";
@@ -117,6 +126,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   "update:sourceText": [value: string];
   "update:enableStreaming": [value: boolean];
+  "update:enableAutoTranslate": [value: boolean];
   clearInput: [];
   translateText: [];
   copyTranslation: [];
@@ -132,6 +142,11 @@ const sourceText = computed({
 const enableStreaming = computed({
   get: () => props.enableStreaming,
   set: (value) => emit("update:enableStreaming", value),
+});
+
+const enableAutoTranslate = computed({
+  get: () => props.enableAutoTranslate,
+  set: (value) => emit("update:enableAutoTranslate", value),
 });
 
 // Methods
@@ -216,7 +231,7 @@ $border-radius: 6px;
 
   &-controls {
     display: flex;
-    gap: $small-gap;
+    gap: $medium-gap;
     flex-wrap: wrap;
     align-items: center;
   }
@@ -232,7 +247,7 @@ $border-radius: 6px;
 
   &-label {
     font-size: $font-size-sm;
-    margin-left: $small-gap;
+    margin-left: 0.3rem;
   }
 }
 
@@ -252,7 +267,7 @@ $border-radius: 6px;
 }
 
 .markdown-preview {
-  padding: 1px 14px;
+  padding: 6px 14px;
   border-radius: $border-radius;
   background: var(--p-surface-100);
   min-height: 300px;
@@ -270,7 +285,7 @@ $border-radius: 6px;
   }
 
   :deep(p) {
-    margin-bottom: 1em;
+    margin: 0;
     line-height: 1.6;
   }
 

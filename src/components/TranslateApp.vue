@@ -36,6 +36,7 @@
       <TranslationPanel
         v-model:source-text="sourceText"
         v-model:enable-streaming="enableStreaming"
+        v-model:enable-auto-translate="enableAutoTranslate"
         :translated-text="translatedText"
         :translated-markdown-html="translatedMarkdownHtml"
         :is-translating="isTranslating"
@@ -65,6 +66,7 @@ const {
   sourceText,
   translatedText,
   enableStreaming,
+  enableAutoTranslate,
   isTranslating,
   error,
   layoutMode,

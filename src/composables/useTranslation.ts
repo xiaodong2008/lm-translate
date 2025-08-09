@@ -18,6 +18,8 @@ export function useTranslation() {
   const availableModels = ref<string[]>([]);
   const selectedModel = ref(""); // Currently selected model
   const isLoadingModels = ref(false);
+  const enableAutoTranslate = ref(false); // Auto-translate toggle
+  const debounceTimer = ref<number | null>(null);
 
   // Computed property for markdown rendering (translation only)
   const translatedMarkdownHtml = computed(() => {
@@ -89,6 +91,20 @@ export function useTranslation() {
     } finally {
       isLoadingModels.value = false;
     }
+  };
+
+  const debounceAutoTranslate = () => {
+    if (!enableAutoTranslate.value || !sourceText.value.trim()) return;
+
+    // Clear existing timer
+    if (debounceTimer.value) {
+      clearTimeout(debounceTimer.value);
+    }
+
+    // Set new timer for 1 second debounce
+    debounceTimer.value = setTimeout(() => {
+      translateText();
+    }, 500);
   };
 
   const translateText = async () => {
@@ -271,7 +287,7 @@ export function useTranslation() {
 
   // Save settings to localStorage
   watch(
-    [lmStudioUrl, sourceLang, targetLang, enableStreaming, layoutMode, selectedModel],
+    [lmStudioUrl, sourceLang, targetLang, enableStreaming, layoutMode, selectedModel, enableAutoTranslate],
     () => {
       localStorage.setItem(
         "translateApp_settings",
@@ -282,6 +298,7 @@ export function useTranslation() {
           enableStreaming: enableStreaming.value,
           layoutMode: layoutMode.value,
           selectedModel: selectedModel.value,
+          enableAutoTranslate: enableAutoTranslate.value,
         })
       );
     },
@@ -303,6 +320,10 @@ export function useTranslation() {
             : true;
         layoutMode.value = settings.layoutMode || "flex";
         selectedModel.value = settings.selectedModel || "";
+        enableAutoTranslate.value =
+          settings.enableAutoTranslate !== undefined
+            ? settings.enableAutoTranslate
+            : false;
       }
     } catch (e) {
       console.warn("Failed to load settings from localStorage");
@@ -319,6 +340,13 @@ export function useTranslation() {
     }
   }, { immediate: true });
 
+  // Watch for sourceText changes to trigger auto-translate
+  watch(sourceText, () => {
+    if (enableAutoTranslate.value && sourceText.value.trim()) {
+      debounceAutoTranslate();
+    }
+  });
+
   return {
     // State
     lmStudioUrl,
@@ -328,6 +356,7 @@ export function useTranslation() {
     translatedText,
     enableMarkdown,
     enableStreaming,
+    enableAutoTranslate,
     isTranslating,
     error,
     layoutMode,
