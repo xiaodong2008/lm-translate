@@ -42,9 +42,7 @@ A modern, responsive web application for translating text using LM Studio with m
 2. Launch LM Studio and go to the "Chat" tab
 3. Download a language model (recommended: Mistral 7B, Llama 2 7B, or similar)
 4. Load the model by clicking on it
-5. Go to the "Local Server" tab
-6. Click "Start Server" to start the API server on `http://localhost:1234`
-7. The translator app will automatically connect to this endpoint
+5. Start LM Studio server with `lms server start --cors`
 
 ## 🎯 Usage
 
@@ -73,8 +71,7 @@ A modern, responsive web application for translating text using LM Studio with m
    - Restart LM Studio if it's unresponsive
 
 3. **CORS errors**
-   - In development, make sure you're using `npm run dev`
-   - The proxy should handle CORS automatically
+   - Make sure you start LM Studio server with `--cors` option
 
 ## 🤝 Contributing
 
